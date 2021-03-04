@@ -1,0 +1,22 @@
+pkgbase = choco
+	pkgdesc = Chocolatey - the package manager for Windows
+	pkgver = 0.10.15
+	pkgrel = 1
+	url = https://chocolatey.org
+	arch = any
+	license = Apache
+	makedepends = git
+	makedepends = mono-msbuild
+	depends = mono
+	provides = choco
+	provides = chocolatey
+	options = !emptydirs
+	source = choco::git+https://github.com/chocolatey/choco#tag=0.10.15
+	source = 0001-Arch-Linux-workaround-patch.patch
+	source = choco.sh
+	sha512sums = SKIP
+	sha512sums = 210830b9903e96361b3d883e888e040fa2be24739f2d5e4b07290f8330f7919826ebada5755c8b86c38a658890b45650b508cb4fc78a669f0b9969110248737c
+	sha512sums = 493bbd882ef3f69f01a27840417cfab560a2bf1b633808503ccdbcce5306a2a1e242511066d86a7a9b3b40d838b56ac99aa7e9add6245e5f3b9be3b08ee48f37
+
+pkgname = choco
+
