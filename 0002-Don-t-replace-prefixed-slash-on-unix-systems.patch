@@ -1,0 +1,72 @@
+From a17bf754f31e9bffe845891dc828baa70d542e52 Mon Sep 17 00:00:00 2001
+From: AdmiringWorm <kim.nordmo@gmail.com>
+Date: Thu, 4 Mar 2021 15:40:38 +0100
+Subject: [PATCH 2/3] Don't replace prefixed slash on unix systems
+
+---
+ .../infrastructure.app/ApplicationParameters.cs       | 11 ++++++-----
+ .../infrastructure/filesystem/DotNetFileSystem.cs     |  4 ++--
+ 2 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/src/chocolatey/infrastructure.app/ApplicationParameters.cs b/src/chocolatey/infrastructure.app/ApplicationParameters.cs
+index 8a39f760..1bd321e0 100644
+--- a/src/chocolatey/infrastructure.app/ApplicationParameters.cs
++++ b/src/chocolatey/infrastructure.app/ApplicationParameters.cs
+@@ -21,6 +21,7 @@ namespace chocolatey.infrastructure.app
+     using adapters;
+     using filesystem;
+     using Environment = System.Environment;
++    using chocolatey.infrastructure.platforms;
+ 
+     /// <summary>
+     ///   Application constants and settings for the application
+@@ -46,9 +47,9 @@ namespace chocolatey.infrastructure.app
+         // start from the assembly location and if unfound, head to the machine
+         // locations instead. This is a merge of official and Debug modes.
+         private static IAssembly _assemblyForLocation = Assembly.GetEntryAssembly().UnderlyingType != null ? Assembly.GetEntryAssembly() : Assembly.GetExecutingAssembly();
+-        public static readonly string InstallLocation = _fileSystem.file_exists(_fileSystem.combine_paths(_fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace("file:///", string.Empty)), "chocolatey.dll")) ||
+-                                                        _fileSystem.file_exists(_fileSystem.combine_paths(_fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace("file:///", string.Empty)), "choco.exe")) ?
+-                _fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace("file:///", string.Empty)) :
++        public static readonly string InstallLocation = _fileSystem.file_exists(_fileSystem.combine_paths(_fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace(Platform.get_platform() == PlatformType.Windows ? "file:///" : "file://", string.Empty)), "chocolatey.dll")) ||
++                                                        _fileSystem.file_exists(_fileSystem.combine_paths(_fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace(Platform.get_platform() == PlatformType.Windows ? "file:///" : "file://", string.Empty)), "choco.exe")) ?
++                _fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace(Platform.get_platform() == PlatformType.Windows ? "file:///" : "file://", string.Empty)) :
+                 !string.IsNullOrWhiteSpace(System.Environment.GetEnvironmentVariable(ChocolateyInstallEnvironmentVariableName)) ?
+                     System.Environment.GetEnvironmentVariable(ChocolateyInstallEnvironmentVariableName) :
+                     @"C:\ProgramData\Chocolatey"
+@@ -131,9 +132,9 @@ namespace chocolatey.infrastructure.app
+         public static int DefaultWaitForExitInSeconds = 2700;
+         public static int DefaultWebRequestTimeoutInSeconds = 30;
+ 
+-        public static readonly string[] ConfigFileExtensions = new string[] {".autoconf",".config",".conf",".cfg",".jsc",".json",".jsonp",".ini",".xml",".yaml"};
++        public static readonly string[] ConfigFileExtensions = new string[] { ".autoconf", ".config", ".conf", ".cfg", ".jsc", ".json", ".jsonp", ".ini", ".xml", ".yaml" };
+         public static readonly string ConfigFileTransformExtension = ".install.xdt";
+-        public static readonly string[] ShimDirectorFileExtensions = new string[] {".gui",".ignore"};
++        public static readonly string[] ShimDirectorFileExtensions = new string[] { ".gui", ".ignore" };
+ 
+         public static readonly string HashProviderFileTooBig = "UnableToDetectChanges_FileTooBig";
+         public static readonly string HashProviderFileLocked = "UnableToDetectChanges_FileLocked";
+diff --git a/src/chocolatey/infrastructure/filesystem/DotNetFileSystem.cs b/src/chocolatey/infrastructure/filesystem/DotNetFileSystem.cs
+index da3ccf2d..3b57bfe5 100644
+--- a/src/chocolatey/infrastructure/filesystem/DotNetFileSystem.cs
++++ b/src/chocolatey/infrastructure/filesystem/DotNetFileSystem.cs
+@@ -175,7 +175,7 @@ namespace chocolatey.infrastructure.filesystem
+ 
+         public string get_current_assembly_path()
+         {
+-            return Assembly.GetExecutingAssembly().CodeBase.Replace("file:///", string.Empty);
++            return Assembly.GetExecutingAssembly().CodeBase.Replace(Platform.get_platform() == PlatformType.Windows ? "file:///" : "file://", string.Empty);
+         }
+ 
+         #endregion
+@@ -432,7 +432,7 @@ namespace chocolatey.infrastructure.filesystem
+                         // copy source file to destination
+                         this.Log().Trace("Copying '{0}' to '{1}'.".format_with(sourceFilePath, destinationFilePath));
+                         copy_file(sourceFilePath, destinationFilePath, overwriteExisting: true);
+-                        
++
+                         // delete source file
+                         try
+                         {
+-- 
+2.30.1
+

@@ -1,22 +1,25 @@
 pkgbase = choco
 	pkgdesc = Chocolatey - the package manager for Windows
-	pkgver = 0.10.15
+	pkgver = 0.10.16beta
 	pkgrel = 1
 	url = https://chocolatey.org
 	arch = any
 	license = Apache
 	makedepends = git
-	makedepends = mono-msbuild
 	depends = mono
 	provides = choco
 	provides = chocolatey
 	options = !emptydirs
-	source = choco::git+https://github.com/chocolatey/choco#tag=0.10.15
-	source = 0001-Arch-Linux-workaround-patch.patch
+	source = choco::git+https://github.com/chocolatey/choco#tag=0.10.16-beta
+	source = 0001-Fix-path-to-ls-executable.patch
+	source = 0002-Don-t-replace-prefixed-slash-on-unix-systems.patch
+	source = 0003-Use-correct-exclude-filer-on-unix.patch
 	source = choco.sh
 	sha512sums = SKIP
-	sha512sums = 210830b9903e96361b3d883e888e040fa2be24739f2d5e4b07290f8330f7919826ebada5755c8b86c38a658890b45650b508cb4fc78a669f0b9969110248737c
-	sha512sums = 493bbd882ef3f69f01a27840417cfab560a2bf1b633808503ccdbcce5306a2a1e242511066d86a7a9b3b40d838b56ac99aa7e9add6245e5f3b9be3b08ee48f37
+	sha512sums = b86f1e652ea9f7b3f639536590901614d291adddf765e4e4d5f011e0da8eb1b42d05af4e5ea98ec2650d16d9d8d42884fd3e8b69350845d1ac5aa6a7177537f6
+	sha512sums = 8ec8e861669e07b2514e2583e573aaffe07a0b4b2eb25c73a470077945525781629dc723b4350d4e475fa92e653493b8fb4878679362be15ea5899f653161559
+	sha512sums = 0275ee67cf592879ffc7e87a03467bad1a4c34f49f27470623e551cdcf0b70a3c2f7d29113c6c963d003de45abe76e2f4aace7cee483bb29d0f4b4829baf2779
+	sha512sums = cf9642b943335f535e6f1d692f2e85e9d68d8539b2e68747d06df84c918237afc0fba87400be82e0953fbcc3c0a054d7b614aa1293cb33ad0c1fa4f5524f84d0
 
 pkgname = choco
 
